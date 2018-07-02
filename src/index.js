@@ -18,12 +18,14 @@ class MyModel extends React.Component {
   render() {
     return (
       <Train
-        train={trainDataGenerator}
+        trainData={trainDataGenerator}
         onBatchEnd={data => console.log(data)}
         epochs={15}
         batchSize={5}
         samples={7}
         onTrainEnd={this.props.onTrainEnd}
+        train
+        display
       >
         <Model optimizer='sgd' loss='meanSquaredError'>
           <Dense units={1} inputShape={[1]} />
@@ -33,13 +35,22 @@ class MyModel extends React.Component {
   }
 }
 
+const data = mnist.set(1000, 100);
+const train = data.training;
+const test = data.test;
+
 function* mnistTrainDataGenerator() {
-  const train = mnist.set(3000, 0).training;
   for (let sample of train) {
     const square_sample = tf.tensor1d(sample.input).reshape([28, 28]);
     yield { x: tf.tensor1d(sample.input).reshape([28, 28, 1]), y: sample.output };
   }
-  // TODO: Manage tensor deletion, or maybe not if tf.js is smart with gpu upload
+}
+
+function* mnistTestDataGenerator() {
+  for (let sample of test) {
+    const square_sample = tf.tensor1d(sample.input).reshape([28, 28]);
+    yield { x: tf.tensor1d(sample.input).reshape([28, 28, 1]), y: sample.output };
+  }
 }
 
 class MnistModel extends React.Component {
@@ -47,12 +58,13 @@ class MnistModel extends React.Component {
     return (
       <Train
         trainData={mnistTrainDataGenerator}
+        samples={1000}
+        validationData={mnistTestDataGenerator}
         onBatchEnd={metrics => console.log(metrics)}
-        epochs={3}
-        batchSize={64}
-        samples={3000}
+        epochs={15}
+        batchSize={128}
         onTrainEnd={this.props.onTrainEnd}
-        train
+        train={this.props.train}
         display
       >
         <Model
@@ -85,6 +97,7 @@ class MnistModel extends React.Component {
 class MyApp extends React.Component {
   state = {
     model: null,
+    training: false,
   };
 
   render() {
@@ -103,7 +116,12 @@ class MyApp extends React.Component {
         }}>
           Predict!
         </button>
-        <MnistModel onTrainEnd={model => this.setState(model)} />
+        <button onClick={() => this.setState({ training: !this.state.training })}>
+          {this.state.training ? 'Pause Training' : 'Start Training'}
+        </button>
+        <MnistModel
+          onTrainEnd={model => this.setState(model)}
+          train={this.state.training}/>
       </div>
     );
   }

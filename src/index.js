@@ -19,7 +19,6 @@ class MyModel extends React.Component {
     return (
       <Train
         trainData={trainDataGenerator}
-        onBatchEnd={data => console.log(data)}
         epochs={15}
         batchSize={5}
         samples={7}

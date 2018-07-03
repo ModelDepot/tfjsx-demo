@@ -34,7 +34,7 @@ class MyModel extends React.Component {
   }
 }
 
-const data = mnist.set(1000, 100);
+const data = mnist.set(1500, 100);
 const train = data.training;
 const test = data.test;
 
@@ -57,11 +57,11 @@ class MnistModel extends React.Component {
     return (
       <Train
         trainData={mnistTrainDataGenerator}
-        samples={1000}
+        samples={1500}
         validationData={mnistTestDataGenerator}
-        onBatchEnd={metrics => console.log(metrics)}
-        epochs={15}
-        batchSize={128}
+        onBatchEnd={this.props.onBatchEnd}
+        epochs={5}
+        batchSize={64}
         onTrainEnd={this.props.onTrainEnd}
         train={this.props.train}
         display
@@ -94,32 +94,64 @@ class MnistModel extends React.Component {
 }
 
 class MyApp extends React.Component {
-  state = {
-    model: null,
-    training: false,
-  };
+  constructor() {
+    super();
+    this.state = {
+      model: null,
+      training: false,
+      trained: false,
+      predicted: null,
+    };
+  }
 
   render() {
-    const one = tf.tensor1d(mnist[1].get()).reshape([28, 28, 1]);
-    const three = tf.tensor1d(mnist[3].get()).reshape([28, 28, 1]);
-    const nine = tf.tensor1d(mnist[9].get()).reshape([28, 28, 1]);
+    const testDigits = [1, 3, 9];
 
-    const test = tf.stack([one, three, nine]);
+    // Randomly selects a test digit, ideally this is drawn from the val
+    // set. But it's just random for now.
+    const test = tf.stack(testDigits.map(digit => {
+      return tf.tensor1d(mnist[digit].get()).reshape([28, 28, 1]);
+    }))
 
+    // MyModel Test
     // const test = tf.tensor([ 1, 3, 25, 99 ], [4, 1]);
 
     return (
       <div>
-        <button onClick={() => {
-          this.state.model.predict(test).print();
-        }}>
-          Predict!
-        </button>
         <button onClick={() => this.setState({ training: !this.state.training })}>
           {this.state.training ? 'Pause Training' : 'Start Training'}
         </button>
+        {this.state.trained && (
+          <div>
+            <button onClick={() => {
+              const probTensor = this.state.model.predict(test);
+              probTensor.print();
+              const probArr = probTensor.dataSync();
+
+              this.setState({
+                predicted: testDigits.map((digit, i) => {
+                  return (
+                    <div className='prob' key={i}>
+                      Sample {i} is digit {digit} with
+                      {' ' + Math.round(probArr[i * 10 + digit] * 100)}%
+                      confidence.
+                    </div>
+                  );
+                }),
+              });
+            }}>
+              Predict
+            </button>
+            <div>
+              Try clicking predict while the model is training and see how
+              the model gets more confident as training progresses.
+            </div>
+          </div>
+        )}
+        {this.state.predicted}
         <MnistModel
-          onTrainEnd={model => this.setState(model)}
+          onTrainEnd={model => this.setState({ model })}
+          onBatchEnd={(metrics, model) => this.setState({ model, trained: true })}
           train={this.state.training}/>
       </div>
     );

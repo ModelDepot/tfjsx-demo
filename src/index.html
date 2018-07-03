@@ -1,7 +1,8 @@
 <!DOCTYPE html>
 <html>
     <head>
-        <title>React starter app</title>
+        <title>Tensorflow.jsx Demo</title>
+        <link rel="shortcut icon" href="https://modeldepot.io/favicon.ico">
         <style>
             button {
                 display: inline-block;
@@ -34,10 +35,42 @@
             button:active {
                 transform: scale(0.99);
             }
+
+            body {
+                font-family: "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif;
+                font-weight: 300;
+            }
+
+            #logo {
+                background-image: url('https://modeldepot.io/logo.png');
+                height: 32px;
+                width: 32px;
+                float: left;
+                background-size: cover;
+                margin-right: 4px;
+            }
+
+            a { color: #1a9afc; }
+
+            .prob {
+                margin-top: 5px;
+            }
         </style>
     </head>
     <body>
+        <h1 style="font-weight: 300">
+            <a href="https://js.tensorflow.org/tutorials/mnist.html">MNIST</a> Tensorflow.jsx Training Demo
+        </h1>
         <div id="app"></div>
         <script src="index.js"></script>
+        <div style="line-height: 32px;">
+            <a href="https://modeldepot.io">
+                <div id="logo"></div>
+                <span>ModelDepot</span>
+            </a>
+            <a href="https://github.com/ModelDepot">
+                <span>Open Source</span>
+            </a>
+        </div>
     </body>
 </html>

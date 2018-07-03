@@ -3,6 +3,8 @@
 This is a demo project to quickly get started with tfjsx.
 Check out the [tfjsx project here](https://github.com/ModelDepot/tfjsx).
 
+[Live Demo](https://codesandbox.io/s/github/ModelDepot/tfjsx-demo)
+
 ![out of the box training visualization](https://github.com/ModelDepot/tfjsx/blob/master/assets/demo.png?raw=true)
 
 # Getting Started

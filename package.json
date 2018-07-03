@@ -10,7 +10,8 @@
     "@tensorflow/tfjs": "^0.11.7",
     "mnist": "^1.1.0",
     "react": "^16.4.1",
-    "react-dom": "^16.4.1"
+    "react-dom": "^16.4.1",
+    "tfjsx": "^1.0.0"
   },
   "devDependencies": {
     "babel-core": "^6.26.0",
